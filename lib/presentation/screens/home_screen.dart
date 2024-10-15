@@ -39,10 +39,10 @@ extendBody: true,
             onTap: (index) {
               selectedIndex=index;
               setState(() {
-
+        
               });
             },
-
+        
             items: [
           BottomNavigationBarItem(icon: Icon(Icons.list,),label: 'Tasks',),
           BottomNavigationBarItem(icon: Icon(Icons.settings),label: 'Settings'),

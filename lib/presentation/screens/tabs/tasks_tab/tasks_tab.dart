@@ -17,6 +17,7 @@ class TasksTab extends StatelessWidget {
             //`selectedDate` the new date selected.
           },
           headerProps: const EasyHeaderProps(
+            padding: EdgeInsets.symmetric(horizontal: 8,),
             monthPickerType: MonthPickerType.dropDown,
             dateFormatter: DateFormatter.fullDateDMY(),
           ),

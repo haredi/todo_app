@@ -4,8 +4,13 @@ import 'package:todo_app/core/my_text_styles.dart';
 
 class MyTheme{
   static  ThemeData lightThem=ThemeData(
+    useMaterial3: false,
     primaryColor: ColorsManager.blueColor,
     dividerColor: ColorsManager.blueColor,
+    colorScheme: ColorScheme.fromSeed(seedColor: ColorsManager.blueColor,
+    primary: ColorsManager.blueColor,
+      onPrimary: ColorsManager.whiteColor,
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: ColorsManager.blueColor,
       elevation: 5,
@@ -19,9 +24,9 @@ class MyTheme{
       elevation: 14,
     ),
     cardTheme: CardTheme(
-      color: ColorsManager.whiteColor,
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: Colors.transparent,
+elevation: 0,
+// shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
 
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -41,7 +46,13 @@ shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       backgroundColor: ColorsManager.blueColor,
       iconSize: 26,
 
-    )
+    ),
+
+    textTheme: TextTheme(
+      titleMedium: MyTextStyles.cardTitleTextStyle,
+      titleSmall: MyTextStyles.cardHourTextStyle,
+      labelSmall: MyTextStyles.settingsItemLabelTextStyle,
+    ),
 
 
   );

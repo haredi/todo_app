@@ -42,11 +42,11 @@ underline: SizedBox.shrink(),
                   style: GoogleFonts.poppins(color: Colors.black, fontSize: 14,fontWeight: FontWeight.w400),
                   elevation: 0,
                   isExpanded: false,
+                  value: selectedTheme,
                   items: <String>['Light','Dark'].map((String value) {
-                    selectedTheme=value;
                     return DropdownMenuItem<String>(
-                      value: selectedTheme,
-                      child: Text(selectedTheme ??''),
+                      value: value,
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (newTheme) {
@@ -82,15 +82,15 @@ underline: SizedBox.shrink(),
                   color: Theme.of(context).primaryColor,
                 ),),
                 DropdownButton<String>(
-                  underline: SizedBox.shrink(),
+                  underline: SizedBox.shrink() ,
                   style: GoogleFonts.poppins(color: Colors.black, fontSize: 14,fontWeight: FontWeight.w400),
                   elevation: 0,
                   isExpanded: false,
+                  value: selectedLang,
                   items: <String>['Arabic','English'].map((String value) {
-                    selectedLang=value;
                     return DropdownMenuItem<String>(
-                      value: selectedLang,
-                      child: Text(selectedLang ??''),
+                      value: value,
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (newLang) {

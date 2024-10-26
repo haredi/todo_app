@@ -5,4 +5,5 @@ class ColorsManager{
   static const Color whiteColor=Color(0xFFFFFFFF);
   static const Color greyColor=Color(0xFFC8C9CB);
   static const Color scaffoldBgColor=Color(0xFFDFECDB);
+  static const Color registerBgColor=Color(0xFF004182);
 }

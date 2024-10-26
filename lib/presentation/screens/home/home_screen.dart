@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/presentation/screens/tabs/settings_tab/settings_tab.dart';
-import 'package:todo_app/presentation/screens/tabs/tasks_tab/tasks_tab.dart';
+import 'package:todo_app/presentation/screens/home/add_task_bottom_sheet/add_task_bottom_sheet.dart';
+import 'package:todo_app/presentation/screens/home/tabs/settings_tab/settings_tab.dart';
+import 'package:todo_app/presentation/screens/home/tabs/tasks_tab/tasks_tab.dart';
 
 class HomeScreen extends StatefulWidget {
    HomeScreen({super.key});
@@ -27,8 +28,7 @@ extendBody: true,
       floatingActionButton: FloatingActionButton(
 
         onPressed: () {
-
-      },
+AddTaskBottomSheet.show(context);      },
       child:const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked   ,

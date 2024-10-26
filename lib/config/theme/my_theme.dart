@@ -15,7 +15,7 @@ class MyTheme{
       backgroundColor: ColorsManager.blueColor,
       elevation: 5,
       centerTitle: true,
-      titleTextStyle:  MyTextStyles.appBarTextStyle
+      titleTextStyle:  AppStyles.appBarTextStyle
     ),
     scaffoldBackgroundColor: ColorsManager.scaffoldBgColor,
     bottomAppBarTheme: const BottomAppBarTheme(
@@ -23,7 +23,7 @@ class MyTheme{
       shape: CircularNotchedRectangle(),
       elevation: 14,
     ),
-    cardTheme: CardTheme(
+    cardTheme: const CardTheme(
       color: Colors.transparent,
 elevation: 0,
 // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -47,11 +47,19 @@ elevation: 0,
       iconSize: 26,
 
     ),
+    bottomSheetTheme: BottomSheetThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        )
+      )
+    ),
 
     textTheme: TextTheme(
-      titleMedium: MyTextStyles.cardTitleTextStyle,
-      titleSmall: MyTextStyles.cardHourTextStyle,
-      labelSmall: MyTextStyles.settingsItemLabelTextStyle,
+      titleMedium: AppStyles.cardTitleTextStyle,
+      titleSmall: AppStyles.cardHourTextStyle,
+      labelSmall: AppStyles.settingsItemLabelTextStyle,
     ),
 
 

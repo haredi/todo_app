@@ -4,52 +4,64 @@ import 'package:todo_app/presentation/screens/home/tabs/settings_tab/settings_ta
 import 'package:todo_app/presentation/screens/home/tabs/tasks_tab/tasks_tab.dart';
 
 class HomeScreen extends StatefulWidget {
-   HomeScreen({super.key});
+  HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-List<Widget> tabs=[
-  TasksTab(),
-  SettingsTab(),
-];
 
-int selectedIndex=0;
+  GlobalKey<TasksTabState> tasksTabKey=GlobalKey();
+  List<Widget> tabs = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    tabs = [
+      TasksTab(key: tasksTabKey,),
+      SettingsTab(),
+    ];
+  }
+
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-extendBody: true,
+      resizeToAvoidBottomInset: false,
+      extendBody: true,
       appBar: AppBar(
-        title:const Text('To Do List'),
+        title: Text(selectedIndex == 1 ? 'Settings' : 'To Do List'),
       ),
       floatingActionButton: FloatingActionButton(
-
-        onPressed: () {
-AddTaskBottomSheet.show(context);      },
-      child:const Icon(Icons.add),
+        onPressed: () async{
+          await AddTaskBottomSheet.show(context);
+          tasksTabKey.currentState?.readTodosFromFireStore();
+        },
+        child: const Icon(Icons.add),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked   ,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         notchMargin: 8,
         child: BottomNavigationBar(
             currentIndex: selectedIndex,
             onTap: (index) {
-              selectedIndex=index;
-              setState(() {
-        
-              });
+              selectedIndex = index;
+              setState(() {});
             },
-        
-            items: [
-          BottomNavigationBarItem(icon: Icon(Icons.list,),label: 'Tasks',),
-          BottomNavigationBarItem(icon: Icon(Icons.settings),label: 'Settings'),
-        ]),
+            items:const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.list,
+                ),
+                label: 'Tasks',
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings), label: 'Settings'),
+            ]),
       ),
-
-      body: tabs[selectedIndex] ,
+      body: tabs[selectedIndex],
     );
   }
 }

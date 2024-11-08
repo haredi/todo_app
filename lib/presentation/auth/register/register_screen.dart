@@ -1,19 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/core/assets_manager.dart';
 import 'package:todo_app/core/colors_manager.dart';
+import 'package:todo_app/core/constant_manager.dart';
 import 'package:todo_app/core/reusable_components/custom_text_form_field.dart';
 import 'package:todo_app/core/routes_manager.dart';
 import 'package:todo_app/core/strings_manager.dart';
+import 'package:todo_app/core/utils/dialog_utils.dart';
+import 'package:todo_app/database_manager/model/user_dm.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
 
   TextEditingController fullNameController = TextEditingController();
+
   TextEditingController userNameController = TextEditingController();
+
   TextEditingController rePasswordController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
 
   @override
@@ -55,7 +64,9 @@ class RegisterScreen extends StatelessWidget {
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
-                        onPressed: () {},
+                        onPressed: () {
+                          signUp(context);
+                        },
                         child: Text(StringsManager.signUp,
                             style: GoogleFonts.poppins(
                               fontSize: 20,
@@ -63,7 +74,7 @@ class RegisterScreen extends StatelessWidget {
                               color: Color(0xFF004182),
                             ))),
                   ),
-                  
+
                   SliverToBoxAdapter(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -95,6 +106,7 @@ class RegisterScreen extends StatelessWidget {
           controller: fullNameController,
         ),
       );
+
   Widget buildUserNameField() => SliverToBoxAdapter(
         child: CustomTextFormField(
           hinText: 'Enter your user name',
@@ -106,6 +118,7 @@ class RegisterScreen extends StatelessWidget {
           controller: userNameController,
         ),
       );
+
   Widget buildEmailField() => SliverToBoxAdapter(
         child: CustomTextFormField(
           hinText: 'Enter your email',
@@ -118,6 +131,7 @@ class RegisterScreen extends StatelessWidget {
           controller: emailController,
         ),
       );
+
   Widget buildPasswordField() => SliverToBoxAdapter(
         child: CustomTextFormField(
           hinText: 'Enter your password',
@@ -133,6 +147,7 @@ class RegisterScreen extends StatelessWidget {
           isSecure: true,
         ),
       );
+
   Widget buildRePasswordField() => SliverToBoxAdapter(
         child: CustomTextFormField(
           hinText: 'Confirm password',
@@ -142,6 +157,7 @@ class RegisterScreen extends StatelessWidget {
             }
           },
           controller: rePasswordController,
+          isSecure: true,
         ),
       );
 
@@ -155,4 +171,48 @@ class RegisterScreen extends StatelessWidget {
       ),
     ),
   );
+
+  void signUp(context) async{
+     try {
+       DialogUtils.showLoadingDialog(context,message: 'wating...');
+
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      UserDM user=UserDM(id: credential.user!.uid,
+          fullName:  fullNameController.text,
+          userName: userNameController.text,
+          email: emailController.text);
+
+      addUserToFireStore(user);
+       DialogUtils.hideDialog(context);
+       DialogUtils.showMessageDialog(context,title: 'Done',content: 'user register Successfully', posActionTitle: 'Ok', posAction: (){
+         Navigator.pushReplacementNamed(context, RoutesManager.loginRoute);
+       });
+
+    } on FirebaseAuthException catch (authError) {
+       DialogUtils.hideDialog(context);
+
+       String message;
+      if (authError.code == AppConstant.weakPassword ) {
+        message= AppConstant.weakPassMessage;
+      } else if (authError.code == AppConstant.emailAlreadyInUse) {
+        message= AppConstant.emailAlreadyInUseMessage ;
+      }else{
+        message= AppConstant.somethingWentWrongMessage;
+      }
+      DialogUtils.showMessageDialog(context,title: 'Error', content: message,posActionTitle: 'Ok');
+    } catch (e) {
+       DialogUtils.hideDialog(context);
+     DialogUtils.showMessageDialog(context,title: 'Error',content: e.toString(),posActionTitle: 'Ok');
+    }
+  }
+
+  void addUserToFireStore(UserDM user)async{
+    CollectionReference collectionReference=FirebaseFirestore.instance.collection('user');
+    DocumentReference newUserDoc=collectionReference.doc(user.id);
+   await newUserDoc.set(user.toFireStore() );
+  }
 }

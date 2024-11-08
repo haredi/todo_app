@@ -4,34 +4,57 @@ import 'package:todo_app/core/colors_manager.dart';
 import 'package:todo_app/core/utils/date_utils.dart';
 import 'package:todo_app/database_manager/model/todo_dm.dart';
 import 'package:todo_app/database_manager/model/user_dm.dart';
+import 'package:todo_app/presentation/screens/home/tabs/tasks_tab/tasks_tab.dart';
 
-class AddTaskBottomSheet extends StatefulWidget {
-  const AddTaskBottomSheet({super.key});
+import '../../../../core/utils/dialog_utils.dart';
+
+class EditTask extends StatefulWidget {
+
+  String taskId;
+  String title;
+  String description;
+  DateTime date;
+   EditTask({super.key,required this.title,required this.description, required this.date, required this.taskId});
   @override
-  State<AddTaskBottomSheet> createState() => AddTaskBottomSheetState();
+  State<EditTask> createState() => EditTaskState();
 
-  static Future show(BuildContext context) {
+  static Future show(BuildContext context,
+      String taskId,
+      String newTitle,
+      String newDescription,
+      DateTime newDate,
+      ) {
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
-        child: AddTaskBottomSheet(),
+        child: EditTask(title: newTitle,description: newDescription,date: newDate,taskId: taskId,),
       ),
     );
   }
 }
 
-class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
+class EditTaskState extends State<EditTask> {
   DateTime userSelectedDate = DateTime.now();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<TasksTabState> tabKey = GlobalKey<TasksTabState>();
+  bool isSaving=false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    titleController.text= widget.title;
+    descriptionController.text= widget.description;
+    userSelectedDate= widget.date;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height *0.5,
+      height: MediaQuery.of(context).size.height * 0.55,
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
       child: Form(
         key: formKey,
@@ -39,19 +62,19 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Add new task',
+              'Edit task',
               style: Theme.of(context).textTheme.headlineLarge,
               textAlign: TextAlign.center,
             ),
             TextFormField(
               validator: (input) {
                 if (input == null || input.trim().isEmpty) {
-                  return 'please, Enter Title';
+                  return 'please, Enter Editing Title';
                 }
               },
               controller: titleController,
               decoration: InputDecoration(
-                hintText: 'Enter task title',
+                hintText: 'Edit task title',
                 hintStyle: Theme.of(context).textTheme.labelMedium,
               ),
             ),
@@ -66,7 +89,7 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               },
               controller: descriptionController,
               decoration: InputDecoration(
-                hintText: 'Enter task description',
+                hintText: 'Edit task description',
                 hintStyle: Theme.of(context).textTheme.labelMedium,
               ),
             ),
@@ -97,10 +120,17 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  addTodoToFireStore();
+                    editTodoInFireStore(
+                      titleController.text,
+                      descriptionController.text,
+                      userSelectedDate
+                  );
+                    tabKey.currentState?.readTodosFromFireStore();
+
+
                 },
                 child: Text(
-                  'Add task',
+                  'Edit task',
                   style: Theme.of(context)
                       .textTheme
                       .labelLarge
@@ -125,28 +155,40 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     setState(() {});
   }
 
-  void addTodoToFireStore() {
+  Future<void> editTodoInFireStore(
+      String? newTitle, String? newDescription, DateTime newDate) async{
     if (formKey.currentState?.validate() == false) return;
+String? message;
+DialogUtils.showLoadingDialog(context,message: 'Loading...');
+    CollectionReference todoCollection = FirebaseFirestore.instance
+        .collection(UserDM.collectionName)
+        .doc(UserDM.user!.id)
+        .collection(TodoDM.collectionName);
 
-    CollectionReference todoCollection =
-        FirebaseFirestore.instance.collection(UserDM.collectionName).doc(UserDM.user!.id).collection(TodoDM.collectionName);
+    DocumentReference doc = todoCollection.doc(widget.taskId);
+    // TodoDM todo=TodoDM(
+    //   id: doc.id,
+    //   title: titleController.text,
+    //   description: descriptionController.text,
+    //   date: userSelectedDate,
+    //   isDone: false,
+    // );
+      doc.update({
+      "title": newTitle,
+      "description": newDescription,
+      "date": Timestamp.fromMillisecondsSinceEpoch(newDate.millisecondsSinceEpoch)
+    }).then((value) {
+      DialogUtils.hideDialog(context);
+        if (mounted) {
+          Navigator.pop(context);
+        }
+        tabKey.currentState?.readTodosFromFireStore();
 
-    DocumentReference doc = todoCollection.doc();
-    TodoDM todo=TodoDM(
-      id: doc.id,
-      title: titleController.text,
-      description: descriptionController.text,
-      date: userSelectedDate,
-      isDone: false,
-    );
-    doc
-        .set(todo.toJson())
-        .then(
-          (value) {
-            if (mounted) {
-              Navigator.pop(context);
-            }
-          },
-        );
+      message='Done editing';
+      DialogUtils.showMessageDialog(context,posActionTitle: 'Ok',content: message,
+          posAction: (){
+          });
+    }).catchError((error) => message='Failed: $error');
+
   }
 }

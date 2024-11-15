@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/core/my_text_styles.dart';
+import 'package:todo_app/main.dart';
+import 'package:todo_app/provider/lang_provider.dart';
+import 'package:todo_app/provider/theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsTab extends StatefulWidget {
   SettingsTab({super.key});
@@ -10,8 +15,6 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  String? selectedTheme = 'Light';
-  String? selectedLang = 'English';
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,7 @@ class _SettingsTabState extends State<SettingsTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Theme',
+            AppLocalizations.of(context)!.theme,
             style: Theme.of(context).textTheme.labelLarge,
           ),
           SizedBox(height: 8),
@@ -37,7 +40,8 @@ class _SettingsTabState extends State<SettingsTab> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  selectedTheme ?? '',
+                  context.read<ThemeProvider>().isLight() ? AppLocalizations.of(context)!.light
+                      : AppLocalizations.of(context)!.dark,
                   style: AppStyles.settingsItemLabelTextStyle,
                 ),
                 DropdownButton<String>(
@@ -59,8 +63,8 @@ class _SettingsTabState extends State<SettingsTab> {
                     );
                   }).toList(),
                   onChanged: (newTheme) {
-                    selectedTheme = newTheme;
-                    setState(() {});
+                    context.read<ThemeProvider>().updateTheme(
+                        newTheme == 'Light' ? ThemeMode.light : ThemeMode.dark);
                   },
                 )
               ],
@@ -68,7 +72,7 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
           SizedBox(height: 15),
           Text(
-            'Language',
+            AppLocalizations.of(context)!.language,
             style: Theme.of(context).textTheme.labelLarge,
           ),
           SizedBox(height: 8),
@@ -83,7 +87,8 @@ class _SettingsTabState extends State<SettingsTab> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(selectedLang ?? '',
+                Text(context.read<LangProvider>().isEnglish()?AppLocalizations.of(context)!.english
+                    :AppLocalizations.of(context)!.arabic,
                     style: AppStyles.settingsItemLabelTextStyle),
                 DropdownButton<String>(
                   isDense: false,
@@ -96,7 +101,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       fontWeight: FontWeight.w400),
                   elevation: 0,
                   isExpanded: false,
-                 // value: selectedLang,
+                  // value: selectedLang,
                   items: <String>['Arabic', 'English'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -104,8 +109,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     );
                   }).toList(),
                   onChanged: (newLang) {
-                    selectedLang = newLang;
-                    setState(() {});
+                    context.read<LangProvider>().updateLang(newLang=='English'?'en':'ar');
                   },
                 )
               ],

@@ -4,6 +4,7 @@ import 'package:todo_app/core/colors_manager.dart';
 import 'package:todo_app/core/utils/date_utils.dart';
 import 'package:todo_app/database_manager/model/todo_dm.dart';
 import 'package:todo_app/database_manager/model/user_dm.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   const AddTaskBottomSheet({super.key});
@@ -31,7 +32,7 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height *0.5,
+      height: MediaQuery.of(context).size.height *0.55,
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
       child: Form(
         key: formKey,
@@ -39,8 +40,8 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Add new task',
-              style: Theme.of(context).textTheme.headlineLarge,
+              AppLocalizations.of(context)!.add_new_task,
+              style: Theme.of(context).textTheme.labelLarge,
               textAlign: TextAlign.center,
             ),
             TextFormField(
@@ -51,7 +52,7 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               },
               controller: titleController,
               decoration: InputDecoration(
-                hintText: 'Enter task title',
+                hintText: AppLocalizations.of(context)!.add_title,
                 hintStyle: Theme.of(context).textTheme.labelMedium,
               ),
             ),
@@ -66,7 +67,7 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               },
               controller: descriptionController,
               decoration: InputDecoration(
-                hintText: 'Enter task description',
+                hintText: AppLocalizations.of(context)!.add_description,
                 hintStyle: Theme.of(context).textTheme.labelMedium,
               ),
             ),
@@ -74,7 +75,7 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               height: 12,
             ),
             Text(
-              'Selected Date',
+              AppLocalizations.of(context)!.select_date,
               style: Theme.of(context).textTheme.labelLarge,
             ),
             const SizedBox(
@@ -100,7 +101,7 @@ class AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   addTodoToFireStore();
                 },
                 child: Text(
-                  'Add task',
+                  AppLocalizations.of(context)!.add_task_button,
                   style: Theme.of(context)
                       .textTheme
                       .labelLarge

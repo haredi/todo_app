@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'colors_manager.dart';
-class MyTextStyles{
-  static TextStyle? appBarTextStyle= const TextStyle(
+class AppStyles{
+  static TextStyle? lightAppBarTextStyle= const TextStyle(
      fontSize: 22,fontWeight: FontWeight.w700,color: ColorsManager.whiteColor
+  );
+  static TextStyle? darkAppBarTextStyle= const TextStyle(
+     fontSize: 22,fontWeight: FontWeight.w700,color: ColorsManager.darkScaffoldBg
   );
   static TextStyle? cardTitleTextStyle= const TextStyle(
       fontSize: 18,
@@ -14,16 +17,11 @@ class MyTextStyles{
       fontSize: 12,
       fontWeight: FontWeight.w400,
       color: Color(0xFF363636));
-  static TextStyle? settingsItemLabelTextStyle= GoogleFonts.poppins(
-    fontSize: 16,
+  static TextStyle? settingsItemLabelTextStyle= GoogleFonts.inter(
+    fontSize: 15,
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF303030)
+        color: const Color(0xFF5D9CEC)
   );
-
-  //const TextStyle(
-  //     fontSize: 16,
-  //     fontWeight: FontWeight.w700,
-  //     color: Color(0xFF303030));
 
 
 }

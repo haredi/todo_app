@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/core/colors_manager.dart';
+import 'package:todo_app/core/routes_manager.dart';
 import 'package:todo_app/core/utils/date_utils.dart';
 import 'package:todo_app/core/utils/dialog_utils.dart';
 import 'package:todo_app/database_manager/model/todo_dm.dart';
@@ -15,8 +16,7 @@ class TaskItem extends StatefulWidget {
   TaskItem({super.key, required this.todo, required this.onDeletedTask});
   Function onDeletedTask;
   TodoDM todo;
-  GlobalKey<TasksTabState> taskTabKey=GlobalKey();
-  GlobalKey<AddTaskBottomSheetState> bottomSheetKey=GlobalKey();
+  GlobalKey<TasksTabState> taskTabKey = GlobalKey();
 
   @override
   State<TaskItem> createState() => TaskItemState();
@@ -65,8 +65,10 @@ class TaskItemState extends State<TaskItem> {
               autoClose: true,
               flex: 1,
               borderRadius: BorderRadius.circular(15),
-              onPressed: (context) {
-                editTask();
+              onPressed: (context) async {
+                await editTask();
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => EditTask(todo: widget.todo,),));
+                widget.taskTabKey.currentState?.readTodosFromFireStore();
               },
               backgroundColor: Theme.of(context).primaryColor,
               foregroundColor: Colors.white,
@@ -130,46 +132,41 @@ class TaskItemState extends State<TaskItem> {
     );
   }
 
-  void deleteTask() async{
-
-    DialogUtils.showLoadingDialog(context,message: 'waiting...');
+  void deleteTask() async {
+    DialogUtils.showLoadingDialog(context, message: 'waiting...');
     var tasksCollection = FirebaseFirestore.instance
         .collection(UserDM.collectionName)
         .doc(UserDM.user!.id)
         .collection(TodoDM.collectionName);
 
     DialogUtils.hideDialog(context);
-     DialogUtils.showMessageDialog(context,title:'Delete task',content: 'Do you want to delete task?',posActionTitle: 'Ok',posAction:
-        ()async{
-          await tasksCollection.doc(widget.todo.id).delete();
-          widget.onDeletedTask();
-       }
-        ,negActionTitle: 'No',negAction: (){});
-
-
-
+    DialogUtils.showMessageDialog(context,
+        title: 'Delete task',
+        content: 'Do you want to delete task?',
+        posActionTitle: 'Ok', posAction: () async {
+      await tasksCollection.doc(widget.todo.id).delete();
+      widget.onDeletedTask();
+    }, negActionTitle: 'No', negAction: () {});
   }
 
-  Future<void> editTask() async{
-
-      DialogUtils.showMessageDialog(context,
-        content:'Do you want to edit task' ,
+  Future<void> editTask() async {
+    DialogUtils.showMessageDialog(
+      context,
+      content: 'Do you want to edit task',
       title: 'Edit Task',
       posActionTitle: 'Edit',
-      posAction: ()async{
-      await EditTask.show(context,
-           widget.todo.id,
-           widget.todo.title,
-          widget.todo.description,
-           widget.todo.date
-       ).then(
-        (_) => setState(() {}),
-      );
-
-
+      posAction: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditTask(
+                todo: widget.todo,
+              ),
+            ));
+        widget.taskTabKey.currentState?.readTodosFromFireStore();
       },
-      negActionTitle:'No' ,
-      negAction: (){},
+      negActionTitle: 'No',
+      negAction: () {},
     );
   }
 }

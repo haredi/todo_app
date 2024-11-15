@@ -11,10 +11,18 @@ import '../../../core/assets_manager.dart';
 import '../../../core/reusable_components/custom_text_form_field.dart';
 import '../../../core/routes_manager.dart';
 import '../../../core/utils/dialog_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
 
   @override
@@ -34,7 +42,7 @@ class LoginScreen extends StatelessWidget {
                 slivers: [
                   SliverToBoxAdapter(
                     child: Text(
-                      'E-mail ',
+                      AppLocalizations.of(context)!.email,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -45,7 +53,7 @@ class LoginScreen extends StatelessWidget {
                   buildEmailField(),
                   SliverToBoxAdapter(
                     child: Text(
-                      'Password',
+                      AppLocalizations.of(context)!.password,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -68,7 +76,7 @@ class LoginScreen extends StatelessWidget {
                         onPressed: () {
                           signIn(context);
                         },
-                        child: Text(StringsManager.signIn,
+                        child: Text(AppLocalizations.of(context)!.sign_in,
                             style: GoogleFonts.poppins(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
@@ -79,7 +87,7 @@ class LoginScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(" Don't have Account ? ",
+                        Text(AppLocalizations.of(context)!.dont_have_account,
                             style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -89,7 +97,7 @@ class LoginScreen extends StatelessWidget {
                               Navigator.pushReplacementNamed(
                                   context, RoutesManager.registerRoute);
                             },
-                            child: Text(StringsManager.signUp,
+                            child: Text(AppLocalizations.of(context)!.sign_up,
                                 style: GoogleFonts.poppins(
                                     decoration: TextDecoration.underline,
                                     color: Colors.white,
@@ -109,7 +117,7 @@ class LoginScreen extends StatelessWidget {
 
   Widget buildEmailField() => SliverToBoxAdapter(
         child: CustomTextFormField(
-          hinText: 'Enter your email',
+          hinText: AppLocalizations.of(context)!.enter_your_email,
           validator: (input) {
             if (input == null || input.trim().isEmpty) {
               return 'please, Enter email address';
@@ -119,9 +127,10 @@ class LoginScreen extends StatelessWidget {
           controller: emailController,
         ),
       );
+
   Widget buildPasswordField() => SliverToBoxAdapter(
         child: CustomTextFormField(
-          hinText: 'Enter your password',
+          hinText: AppLocalizations.of(context)!.password,
           validator: (input) {
             if (input == null || input.trim().isEmpty) {
               return 'please, Enter password';
@@ -170,7 +179,6 @@ class LoginScreen extends StatelessWidget {
           title: 'Error', content: e.toString(), posActionTitle: 'Ok');
     }
   }
-
 
   Future<UserDM>getUserFromFireStore(String uid)async{
     CollectionReference collectionReference=FirebaseFirestore.instance.collection(UserDM.collectionName);

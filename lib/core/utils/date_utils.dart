@@ -7,7 +7,7 @@
 // }
 extension FormateDate on DateTime{
   String get toFormattedDate=>'$day / $month / $year';
-  String get toFormattedHour=>'$hour : $minute ';
+  String get toFormattedHour=>'$hour: $minute: $second';
   String get getDayName{
     List<String> weekDays=['MON','TUE','WED','THR','FRI','SAT','SUN'];
     //DateTime date=DateTime.now();

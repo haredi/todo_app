@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/core/routes_manager.dart';
+import 'package:todo_app/core/utils/dialog_utils.dart';
 import 'package:todo_app/presentation/screens/home/add_task_bottom_sheet/add_task_bottom_sheet.dart';
 import 'package:todo_app/presentation/screens/home/tabs/settings_tab/settings_tab.dart';
 import 'package:todo_app/presentation/screens/home/tabs/tasks_tab/tasks_tab.dart';
@@ -12,15 +15,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-  GlobalKey<TasksTabState> tasksTabKey=GlobalKey();
+  GlobalKey<TasksTabState> tasksTabKey = GlobalKey();
   List<Widget> tabs = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     tabs = [
-      TasksTab(key: tasksTabKey,),
+      TasksTab(
+        key: tasksTabKey,
+      ),
       SettingsTab(),
     ];
   }
@@ -33,10 +37,25 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       extendBody: true,
       appBar: AppBar(
-        title: Text(selectedIndex == 1 ? AppLocalizations.of(context)!.settings : AppLocalizations.of(context)!.todo_List),
+        actions: [
+          IconButton(
+              onPressed: () {
+                DialogUtils.showMessageDialog(context,
+                    content: 'Do you Log out?',
+                    posActionTitle: 'Log Out', posAction: () {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacementNamed(
+                      context, RoutesManager.loginRoute);
+                }, negActionTitle: 'cancel');
+              },
+              icon: Icon(Icons.logout))
+        ],
+        title: Text(selectedIndex == 1
+            ? AppLocalizations.of(context)!.settings
+            : AppLocalizations.of(context)!.todo_List),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async{
+        onPressed: () async {
           await AddTaskBottomSheet.show(context);
           tasksTabKey.currentState?.readTodosFromFireStore();
         },
@@ -59,7 +78,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: AppLocalizations.of(context)!.tasks,
               ),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.settings,), label: AppLocalizations.of(context)!.settings),
+                  icon: Icon(
+                    Icons.settings,
+                  ),
+                  label: AppLocalizations.of(context)!.settings),
             ]),
       ),
       body: tabs[selectedIndex],

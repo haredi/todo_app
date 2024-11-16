@@ -10,7 +10,7 @@ class AppStyles{
      fontSize: 22,fontWeight: FontWeight.w700,color: ColorsManager.darkScaffoldBg
   );
   static TextStyle? cardTitleTextStyle= const TextStyle(
-      fontSize: 18,
+      fontSize: 22,
       fontWeight: FontWeight.w700,
       color: Color(0xFF5D9CEC));
   static TextStyle? cardHourTextStyle= const TextStyle(
@@ -18,7 +18,7 @@ class AppStyles{
       fontWeight: FontWeight.w400,
       color: Color(0xFF363636));
   static TextStyle? settingsItemLabelTextStyle= GoogleFonts.inter(
-    fontSize: 15,
+    fontSize: 18,
         fontWeight: FontWeight.w700,
         color: const Color(0xFF5D9CEC)
   );

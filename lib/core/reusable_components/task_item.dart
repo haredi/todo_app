@@ -2,15 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/core/colors_manager.dart';
-import 'package:todo_app/core/routes_manager.dart';
 import 'package:todo_app/core/utils/date_utils.dart';
 import 'package:todo_app/core/utils/dialog_utils.dart';
 import 'package:todo_app/database_manager/model/todo_dm.dart';
 import 'package:todo_app/database_manager/model/user_dm.dart';
 import 'package:todo_app/presentation/screens/home/edit_task/edit_task.dart';
 import 'package:todo_app/presentation/screens/home/tabs/tasks_tab/tasks_tab.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../presentation/screens/home/add_task_bottom_sheet/add_task_bottom_sheet.dart';
 
 class TaskItem extends StatefulWidget {
   TaskItem({super.key, required this.todo, required this.onDeletedTask});
@@ -49,7 +48,7 @@ class TaskItemState extends State<TaskItem> {
               backgroundColor: const Color(0xFFFE4A49),
               foregroundColor: Colors.white,
               icon: Icons.delete,
-              label: 'Delete',
+              label: AppLocalizations.of(context)!.delete,
             ),
           ],
         ),
@@ -65,15 +64,13 @@ class TaskItemState extends State<TaskItem> {
               autoClose: true,
               flex: 1,
               borderRadius: BorderRadius.circular(15),
-              onPressed: (context) async {
-                await editTask();
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => EditTask(todo: widget.todo,),));
-                widget.taskTabKey.currentState?.readTodosFromFireStore();
+              onPressed: (context) {
+                 editTask();
               },
               backgroundColor: Theme.of(context).primaryColor,
               foregroundColor: Colors.white,
               icon: Icons.edit,
-              label: 'Edit',
+              label: AppLocalizations.of(context)!.edit,
             ),
           ],
         ),
@@ -92,6 +89,7 @@ class TaskItemState extends State<TaskItem> {
                   width: 25,
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.todo.title,
                         style: Theme.of(context).textTheme.titleMedium),
@@ -99,7 +97,7 @@ class TaskItemState extends State<TaskItem> {
                       height: 12,
                     ),
                     Text(widget.todo.description,
-                        style: Theme.of(context).textTheme.titleMedium),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 18,fontWeight: FontWeight.w700)),
                     Row(
                       // mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -107,9 +105,10 @@ class TaskItemState extends State<TaskItem> {
                           Icons.lock_clock,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
+                        SizedBox(width: 5,),
                         Text(
                           widget.todo.date.toFormattedHour,
-                          style: Theme.of(context).textTheme.titleSmall,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 16,fontWeight: FontWeight.w400),
                         )
                       ],
                     )
@@ -163,7 +162,7 @@ class TaskItemState extends State<TaskItem> {
                 todo: widget.todo,
               ),
             ));
-        widget.taskTabKey.currentState?.readTodosFromFireStore();
+        //widget.taskTabKey.currentState?.readTodosFromFireStore();
       },
       negActionTitle: 'No',
       negAction: () {},
